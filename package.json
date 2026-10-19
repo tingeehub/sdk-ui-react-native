@@ -1,0 +1,95 @@
+{
+  "name": "@tingee/sdk-ui-react-native",
+  "version": "1.0.0-beta.1",
+  "description": "Bộ thư viện Tingee UI SDK chính thức cho React Native & Expo (iOS/Android) — Tích hợp Liên kết Ngân hàng (Bank Link) & Cổng Thanh toán (Payment Gateway Checkout)",
+  "keywords": [
+    "tingee",
+    "tingee-sdk",
+    "tingee-sdk-ui",
+    "tingee-react-native",
+    "react-native",
+    "expo",
+    "heno",
+    "baas",
+    "open-banking",
+    "bank-link",
+    "lien-ket-ngan-hang",
+    "payment-gateway",
+    "cong-thanh-toan",
+    "checkout",
+    "vietqr",
+    "pay-by-bank",
+    "virtual-account",
+    "webview"
+  ],
+  "homepage": "https://developers.tingee.vn",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tingeehub/sdk-ui-react-native.git"
+  },
+  "bugs": {
+    "url": "https://github.com/tingeehub/sdk-ui-react-native/issues"
+  },
+  "license": "MIT",
+  "author": "TINGEE by HENO <developer@heno.vn> (https://tingee.vn)",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "react-native": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": {
+        "import": "./dist/index.d.ts",
+        "require": "./dist/index.d.cts"
+      },
+      "react-native": "./dist/index.js",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-native": ">=0.60.0",
+    "react-native-webview": ">=11.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-native": {
+      "optional": true
+    },
+    "react-native-webview": {
+      "optional": true
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run typecheck && npm run test && npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/react": "^18.3.0",
+    "react": "^18.3.1",
+    "tsup": "^8.3.5",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
