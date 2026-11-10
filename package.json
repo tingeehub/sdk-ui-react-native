@@ -1,6 +1,6 @@
 {
   "name": "@tingee/sdk-ui-react-native",
-  "version": "1.0.0-beta.1",
+  "version": "1.0.0",
   "description": "Bộ thư viện Tingee UI SDK chính thức cho React Native & Expo (iOS/Android) — Tích hợp Liên kết Ngân hàng (Bank Link) & Cổng Thanh toán (Payment Gateway Checkout)",
   "keywords": [
     "tingee",

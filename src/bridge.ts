@@ -229,6 +229,91 @@ export const TINGEE_WEBVIEW_INJECTED_JS = `
 true;
 `;
 
+export interface BuildInjectedJsOptions {
+  theme?: TingeeTheme;
+  customCss?: string;
+  injectedJavaScript?: string;
+}
+
+/**
+ * Tạo chuỗi JavaScript tiêm vào WebView, kết hợp:
+ * 1. Cầu nối `postMessage` & `TINGEE_READY`
+ * 2. Chống auto-zoom khi focus vào ô input trên iOS
+ * 3. Tiêm biến CSS từ `theme` và CSS tùy chỉnh sâu (`customCss`)
+ * 4. Thực thi `injectedJavaScript` của người dùng (nếu có)
+ */
+export function buildTingeeInjectedJs(options?: BuildInjectedJsOptions): string {
+  let cssRules = '';
+
+  if (options?.theme && typeof options.theme === 'object') {
+    const vars: string[] = [];
+    const t = options.theme;
+    if (typeof t.primaryColor === 'string' && t.primaryColor) {
+      vars.push(`--primary-color: ${t.primaryColor}; --tingee-primary: ${t.primaryColor};`);
+    }
+    const hover = t.primaryHoverColor || t.primaryHover;
+    if (typeof hover === 'string' && hover) {
+      vars.push(`--primary-hover-color: ${hover}; --tingee-primary-hover: ${hover};`);
+    }
+    const soft = t.primarySoftColor || t.primarySoft;
+    if (typeof soft === 'string' && soft) {
+      vars.push(`--primary-soft-color: ${soft}; --tingee-primary-soft: ${soft};`);
+    }
+    for (const [key, val] of Object.entries(t)) {
+      if (key.startsWith('--') && typeof val === 'string') {
+        vars.push(`${key}: ${val};`);
+      }
+    }
+    if (vars.length > 0) {
+      cssRules += `:root { ${vars.join(' ')} }\n`;
+    }
+    if (typeof t.customCss === 'string' && t.customCss.trim()) {
+      cssRules += `${t.customCss.trim()}\n`;
+    }
+  }
+
+  if (options?.customCss && options.customCss.trim()) {
+    cssRules += `${options.customCss.trim()}\n`;
+  }
+
+  let extraScript = '';
+
+  if (cssRules) {
+    const encodedCss = JSON.stringify(cssRules);
+    extraScript += `
+(function() {
+  function applyTingeeCustomCss() {
+    try {
+      if (!document || !document.head) return;
+      var styleEl = document.getElementById('__tingee_custom_css');
+      if (!styleEl) {
+        styleEl = document.createElement('style');
+        styleEl.id = '__tingee_custom_css';
+        document.head.appendChild(styleEl);
+      }
+      styleEl.innerHTML = ${encodedCss};
+    } catch (e) {}
+  }
+  applyTingeeCustomCss();
+  document.addEventListener('DOMContentLoaded', applyTingeeCustomCss);
+  window.addEventListener('load', applyTingeeCustomCss);
+})();
+`;
+  }
+
+  if (options?.injectedJavaScript && options.injectedJavaScript.trim()) {
+    extraScript += `
+(function() {
+  try {
+    ${options.injectedJavaScript}
+  } catch (e) {}
+})();
+`;
+  }
+
+  return `${TINGEE_WEBVIEW_INJECTED_JS}\n${extraScript}\ntrue;`;
+}
+
 export function parseTingeeMessage(rawData: unknown): Record<string, unknown> | null {
   if (!rawData) return null;
   let data: unknown = rawData;

@@ -12,11 +12,11 @@ import {
 import { WebView } from 'react-native-webview';
 import {
   buildTingeeEmbedUrl,
+  buildTingeeInjectedJs,
   isExternalDeepLink,
   parseTingeeMessage,
   resolveBankLinkBaseUrl,
   resolveCheckoutBaseUrl,
-  TINGEE_WEBVIEW_INJECTED_JS,
 } from '../bridge';
 import type {
   TingeeBankLinkModalProps,
@@ -45,6 +45,9 @@ function TingeeBaseWebView<TSuccess = Record<string, unknown>>(
     environment = 'prod',
     baseUrl,
     theme,
+    customCss,
+    injectedJavaScript,
+    webViewProps,
     enableDeepLink = true,
     style,
     showLoading = true,
@@ -84,6 +87,14 @@ function TingeeBaseWebView<TSuccess = Record<string, unknown>>(
       return '';
     }
   }, [url, resolvedBaseUrl, mode, theme, onError]);
+
+  const combinedInjectedJs = useMemo(() => {
+    return buildTingeeInjectedJs({
+      theme,
+      customCss,
+      injectedJavaScript,
+    });
+  }, [theme, customCss, injectedJavaScript]);
 
   const handleMessage = useCallback(
     (event: { nativeEvent?: { data?: string } }) => {
@@ -156,6 +167,7 @@ function TingeeBaseWebView<TSuccess = Record<string, unknown>>(
   return (
     <View style={[styles.container, style]}>
       <WebView
+        {...webViewProps}
         source={{ uri: targetUrl }}
         style={styles.webview}
         javaScriptEnabled={true}
@@ -165,8 +177,8 @@ function TingeeBaseWebView<TSuccess = Record<string, unknown>>(
         setBuiltInZoomControls={false}
         setDisplayZoomControls={false}
         originWhitelist={['*']}
-        injectedJavaScriptBeforeContentLoaded={TINGEE_WEBVIEW_INJECTED_JS}
-        injectedJavaScript={TINGEE_WEBVIEW_INJECTED_JS}
+        injectedJavaScriptBeforeContentLoaded={combinedInjectedJs}
+        injectedJavaScript={combinedInjectedJs}
         onMessage={handleMessage}
         onShouldStartLoadWithRequest={handleShouldStartLoad}
         onLoadStart={() => setIsLoading(true)}

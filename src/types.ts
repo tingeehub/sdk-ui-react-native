@@ -4,6 +4,12 @@ export type TingeeEnvironment = 'prod' | 'uat';
 
 export interface TingeeThemeConfig {
   primaryColor?: string;
+  primaryHoverColor?: string;
+  primaryHover?: string;
+  primarySoftColor?: string;
+  primarySoft?: string;
+  customCss?: string;
+  [cssVariable: `--${string}`]: string | undefined;
   [key: string]: unknown;
 }
 
@@ -72,9 +78,21 @@ export interface TingeeBaseConfig<TSuccess = Record<string, unknown>>
    */
   baseUrl?: string;
   /**
-   * Cấu hình giao diện / màu sắc chủ đạo (ví dụ: { primaryColor: '#1E88E5' })
+   * Cấu hình giao diện / màu sắc chủ đạo (ví dụ: { primaryColor: '#1E88E5', '--border-radius': '12px' })
    */
   theme?: TingeeTheme;
+  /**
+   * CSS tùy chỉnh sâu được tiêm trực tiếp vào thẻ <style> trong WebView
+   */
+  customCss?: string;
+  /**
+   * Đoạn mã JavaScript tùy chỉnh được thực thi bên trong WebView sau khi trang tải
+   */
+  injectedJavaScript?: string;
+  /**
+   * Các props bổ sung truyền trực tiếp xuống component <WebView /> của react-native-webview
+   */
+  webViewProps?: Record<string, unknown>;
   /**
    * Tự động mở các liên kết ngoài / Deep Link app ngân hàng qua Linking.openURL. Mặc định: true
    */

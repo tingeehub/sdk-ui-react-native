@@ -94,7 +94,9 @@ export default function BankLinkScreen() {
 }
 ```
 
-### 1.2. Sử dụng với `async/await` (`openAsync`)
+### 1.2. Truyền cấu hình động từ Backend, Custom CSS sâu & `injectedJavaScript`
+
+Nếu màu sắc (`theme`), `customCss` hoặc `injectedJavaScript` được trả về từ API Backend sau khi tạo phiên liên kết, bạn có thể truyền trực tiếp vào **tham số thứ 2** của `open(url, options)` hoặc `openAsync(url, options)`:
 
 ```tsx
 const bankLink = useTingeeBankLink();
@@ -103,9 +105,25 @@ const handleStartLink = async () => {
   const res = await fetch('https://your-backend.com/api/bank-link/session', {
     method: 'POST',
   });
-  const { url } = await res.json();
+  const { url, primaryColor, customCss } = await res.json();
 
-  const result = await bankLink.openAsync(url);
+  const result = await bankLink.openAsync(url, {
+    theme: {
+      primaryColor: primaryColor || '#1E88E5',
+      primaryHoverColor: '#1565C0',
+      primarySoftColor: '#E3F2FD',
+      '--border-radius': '12px',
+    },
+    // Tiêm CSS tùy chỉnh sâu trực tiếp vào WebView
+    customCss: customCss || `
+      body { font-family: -apple-system, sans-serif !important; }
+    `,
+    // Thực thi thêm JavaScript tùy chỉnh trong WebView (nếu cần)
+    injectedJavaScript: `
+      console.log('Tingee Bank Link loaded');
+    `,
+  });
+
   if (result.status === 'success') {
     console.log('Số tài khoản VA:', result.vaAccountNumber);
   }
@@ -184,12 +202,17 @@ export default function CheckoutScreen() {
 
 ## 3. Danh sách Props & Cấu hình
 
+> **Lưu ý:** Khi sử dụng Hook (`useTingeeBankLink` / `useTingeeCheckout`), bạn có thể truyền cấu hình mặc định vào Hook hoặc truyền động vào hàm `open(url, options)` / `openAsync(url, options)` ở mỗi lần mở.
+
 | Prop | Kiểu dữ liệu | Mặc định | Mô tả |
 | :--- | :--- | :--- | :--- |
 | `url` | `string` | *(bắt buộc)* | Đường dẫn session URL nhận từ API Backend. |
 | `visible` | `boolean` | `false` | *(Chỉ cho Modal)* Điều khiển hiển thị đóng/mở Modal. |
 | `environment` | `'prod' \| 'uat'` | `'prod'` | Môi trường tích hợp (`'uat'` cho Sandbox, `'prod'` cho Production). |
-| `theme` | `string \| { primaryColor?: string }` | `undefined` | Màu chủ đạo của giao diện (ví dụ: `{ primaryColor: '#1E88E5' }`). |
+| `theme` | `string \| { primaryColor?, primaryHoverColor?, primarySoftColor?, customCss?, '--*'?: string }` | `undefined` | Màu chủ đạo, biến CSS (`--*`) và giao diện của trang nhúng. |
+| `customCss` | `string` | `undefined` | Chuỗi CSS tùy chỉnh sâu được tiêm trực tiếp (`<style>`) vào trong WebView. |
+| `injectedJavaScript` | `string` | `undefined` | Đoạn mã JavaScript tùy chỉnh được thực thi bên trong WebView sau khi tải trang. |
+| `webViewProps` | `Record<string, unknown>` | `undefined` | Các props bổ sung truyền thẳng xuống `<WebView />` của `react-native-webview`. |
 | `title` | `string` | `'Liên kết ngân hàng'` | *(Chỉ cho Modal)* Tiêu đề thanh Header của Modal. |
 | `showHeader` | `boolean` | `true` | *(Chỉ cho Modal)* Hiển thị thanh Header và nút đóng (`✕`). |
 | `showLoading` | `boolean` | `true` | Hiển thị vòng xoay loading khi WebView đang tải trang. |

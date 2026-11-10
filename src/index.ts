@@ -5,6 +5,7 @@ export {
   resolveBankLinkBaseUrl,
   resolveCheckoutBaseUrl,
   buildTingeeEmbedUrl,
+  buildTingeeInjectedJs,
   isExternalDeepLink,
   parseTingeeMessage,
   TINGEE_WEBVIEW_INJECTED_JS,
