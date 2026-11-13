@@ -27,6 +27,46 @@ Nếu sử dụng **React Native CLI (iOS)**, chạy thêm:
 cd ios && pod install
 ```
 
+### Khai báo quyền Camera & Thư viện ảnh (bắt buộc)
+
+Giao diện Liên kết ngân hàng có tính năng **quét mã QR bằng camera** và **tải ảnh QR từ thư viện**. SDK đã bật sẵn cấu hình WebView cần thiết, ứng dụng của bạn chỉ cần khai báo quyền:
+
+**iOS** — `ios/<TênApp>/Info.plist` (thiếu `NSCameraUsageDescription` ứng dụng sẽ bị crash khi mở camera):
+
+```xml
+<key>NSCameraUsageDescription</key>
+<string>Ứng dụng cần quyền camera để quét mã QR tài khoản ngân hàng.</string>
+<key>NSPhotoLibraryUsageDescription</key>
+<string>Ứng dụng cần quyền truy cập thư viện ảnh để tải ảnh mã QR tài khoản ngân hàng.</string>
+```
+
+**Android** — `android/app/src/main/AndroidManifest.xml`:
+
+```xml
+<uses-permission android:name="android.permission.CAMERA" />
+<uses-feature android:name="android.hardware.camera" android:required="false" />
+```
+
+**Expo** — `app.json`:
+
+```json
+{
+  "expo": {
+    "ios": {
+      "infoPlist": {
+        "NSCameraUsageDescription": "Ứng dụng cần quyền camera để quét mã QR tài khoản ngân hàng.",
+        "NSPhotoLibraryUsageDescription": "Ứng dụng cần quyền truy cập thư viện ảnh để tải ảnh mã QR tài khoản ngân hàng."
+      }
+    },
+    "android": {
+      "permissions": ["android.permission.CAMERA"]
+    }
+  }
+}
+```
+
+> Khuyến nghị dùng `react-native-webview` >= 11.18 (hỗ trợ `mediaCapturePermissionGrantType` trên iOS 15+).
+
 ---
 
 ## Tính năng nổi bật

@@ -1,5 +1,15 @@
 # Changelog
 
+## [1.0.1] - 2026-11-13
+
+### Fixed
+
+- Quét QR bằng camera trong giao diện Liên kết ngân hàng không hiển thị / không phát được trên iOS: WebView bật mặc định `allowsInlineMediaPlayback`, `mediaPlaybackRequiresUserAction={false}` và `mediaCapturePermissionGrantType="grantIfSameHostElsePrompt"` (có thể ghi đè qua `webViewProps`).
+
+### Docs
+
+- Bổ sung hướng dẫn khai báo quyền Camera & Thư viện ảnh cho iOS, Android và Expo.
+
 ## [1.0.0] - 2026-11-10
 
 Bản phát hành chính thức (stable) đầu tiên.

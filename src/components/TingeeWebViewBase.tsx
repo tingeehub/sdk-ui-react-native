@@ -167,6 +167,11 @@ function TingeeBaseWebView<TSuccess = Record<string, unknown>>(
   return (
     <View style={[styles.container, style]}>
       <WebView
+        // Quét QR bằng camera trong trang: iOS cần phát video inline, tự phát không cần chạm,
+        // và cấp quyền camera cho trang Tingee (vẫn có hộp thoại quyền hệ thống lần đầu)
+        allowsInlineMediaPlayback={true}
+        mediaPlaybackRequiresUserAction={false}
+        mediaCapturePermissionGrantType="grantIfSameHostElsePrompt"
         {...webViewProps}
         source={{ uri: targetUrl }}
         style={styles.webview}
